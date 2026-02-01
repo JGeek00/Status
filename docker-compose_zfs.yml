@@ -3,6 +3,11 @@ services:
   status_app:
     container_name: status_app
     build: .
+    user: "0:0"
+    cap_drop:
+      - ALL
+    cap_add:
+      - SYS_ADMIN
     volumes:
       - "/etc/os-release:/host_root/etc/os-release:ro"
       - "/etc/hostname:/host_root/etc/hostname:ro"
@@ -12,9 +17,13 @@ services:
       - "/mnt:/mnt:ro"
       - "/media:/media:ro"
       - "/run/media:/run/media:ro"
+    devices:
+      - "/dev/zfs:/dev/zfs"
     ports:
       - "9090:9090"
     restart: always
+    security_opt:
+      - "no-new-privileges:false"
     pids_limit: 512
     mem_limit: 100m
     cpus: 1

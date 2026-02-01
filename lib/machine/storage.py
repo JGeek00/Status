@@ -1,7 +1,7 @@
 import shutil
 import os
 
-from .utils import get
+from .utils import get, run_command, command_exists
 from ..config import config
 
 
@@ -55,8 +55,63 @@ class Storage:
 				"available": usage.f_bsize * usage.f_bavail
 			}
 
+		# Add ZFS pools
+		zfs_pools = get_zfs_pools()
+		for pool_name, pool_data in zfs_pools.items():
+			result[pool_name] = pool_data
+
 		return result
 
+
+
+def get_zfs_pools():
+	"""Get ZFS pool information using zpool list command.
+	
+	Returns empty dict if ZFS is not installed or accessible.
+	Never raises exceptions - fails gracefully.
+	"""
+	pools = {}
+	
+	try:
+		# Check if zpool command exists before trying to use it
+		if not command_exists("zpool"):
+			return pools
+		
+		# Execute zpool list with -H (no headers) and -p (parseable/numeric values)
+		output = run_command(["zpool", "list", "-H", "-p"])
+		
+		if not output:
+			return pools
+		
+		for line in output.split("\n"):
+			if not line.strip():
+				continue
+			
+			parts = line.split()
+			if len(parts) < 4:  # Need at least name, size, alloc, free
+				continue
+			
+			try:
+				name = parts[0]
+				size = int(parts[1])  # Total size in bytes
+				alloc = int(parts[2])  # Allocated space in bytes
+				free = int(parts[3])   # Free space in bytes
+				
+				pools[name] = {
+					"icon": "database",
+					"total": size,
+					"available": free
+				}
+			except (ValueError, IndexError):
+				# Skip malformed lines
+				continue
+		
+	except Exception:
+		# Catch any unexpected errors and return empty dict
+		# This ensures the app never crashes due to ZFS issues
+		pass
+	
+	return pools
 
 
 def nice_path(path):

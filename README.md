@@ -1,16 +1,12 @@
-**⚠️ Project in maintenance mode**. This means no new features will appear, only bug fixes. For more info, see **[Announcement](announcement.md)**.
-
-
 ## :thinking: What is it?
 
 :information_source: **Status** is a simple, lightweight system monitoring app for small homeservers running Linux.
-It utilizes virtual filesystems (like `/sys`, `/proc` etc.) to retrieve information and give it to end user via nice web interface.
+It utilizes virtual filesystems (like `/sys`, `/proc` etc.) to retrieve information and give it to end user via nice web interface. 
+It also includes ZFS support. If your system has ZFS pools their details will be shown on this app. If this is your case, make sure to follow correctly the installation instructions.
 
 :balance_scale: **Status** provides a good  balance between power and simplicity.
 
 :runner: Runs flawlessly on most desktop computers, mini PCs and Raspberry Pis. However, virtual isolated environments may cause problems.
-
-:tv: **[Check the live demo!](https://status-ksk5.onrender.com)** (but give it a while to load as Render suspends idle services)
 
 
 ### Web UI
@@ -56,13 +52,7 @@ sh -c "source ./venv/bin/activate && python3 status.py"
 
 **It just works.** Most of features should run without hassle, but depending on your OS configuration you may notice some minor limitations.
 
-```
-# Clone the repo
-git clone https://github.com/dani3l0/Status && cd Status
-
-# Build & run app
-docker-compose up -d
-```
+Get the Docker Compose file. If your system has ZFS pools take ``docker-compose-zfs.yml``, if not, take ``docker-compose.yml``. Then, run ``docker compose up -d`` to start the app.
 
 App should be available on [localhost:9090](http://localhost:9090).
 

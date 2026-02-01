@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 from glob import glob
 
 
@@ -57,3 +58,36 @@ def basename(path: str):
 def parse_temperature(temp: int, divide: bool = True):
 	if not temp: return temp
 	return temp / 1000 if divide else temp
+
+
+def command_exists(command: str):
+	"""Check if a command exists in the system."""
+	try:
+		result = subprocess.run(
+			["which", command],
+			capture_output=True,
+			text=True,
+			timeout=2,
+			check=False
+		)
+		return result.returncode == 0
+	except Exception:
+		return False
+
+
+def run_command(command: list):
+	"""Execute a system command and return its output. Returns None if command fails or doesn't exist."""
+	try:
+		result = subprocess.run(
+			command,
+			capture_output=True,
+			text=True,
+			timeout=5,
+			check=False
+		)
+		if result.returncode == 0:
+			return result.stdout.strip()
+		return None
+	except (subprocess.TimeoutExpired, FileNotFoundError, PermissionError, OSError, Exception):
+		# Silently handle any error - command might not exist or be accessible
+		return None
