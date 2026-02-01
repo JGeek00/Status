@@ -2,7 +2,7 @@ version: "2"
 services:
   status_app:
     container_name: status_app
-    build: .
+    image: ghcr.io/jgeek00/status:latest
     volumes:
       - "/etc/os-release:/host_root/etc/os-release:ro"
       - "/etc/hostname:/host_root/etc/hostname:ro"

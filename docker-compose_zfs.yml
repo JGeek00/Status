@@ -2,7 +2,7 @@ version: "2"
 services:
   status_app:
     container_name: status_app
-    build: .
+    image: ghcr.io/jgeek00/status:latest
     user: "0:0"
     cap_drop:
       - ALL
